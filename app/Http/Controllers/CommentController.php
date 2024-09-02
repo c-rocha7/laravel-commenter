@@ -16,7 +16,9 @@ class CommentController extends Controller
      */
     public function index(): View
     {
-        return view('comments.index');
+        return view('comments.index', [
+            'comments' => Comment::with('user')->latest()->get(),
+        ]);
     }
 
     /**
@@ -24,7 +26,6 @@ class CommentController extends Controller
      */
     public function create()
     {
-        //
     }
 
     /**
@@ -34,10 +35,12 @@ class CommentController extends Controller
     {
         $validated = $request->validate([
             'message' => 'required|string|max:255',
+        ], [
+            'message.required' => 'O campo mensagem é obrigatório.',
+            'message.string'   => 'O campo mensagem deve ser um texto válido.',
+            'message.max'      => 'O campo mensagem deve ter somente 255 caracteres.',
         ]);
 
-        // auth()->user()
-        // Auth::user()
         $request->user()->comments()->create($validated);
 
         return to_route('comments.index');
@@ -48,7 +51,6 @@ class CommentController extends Controller
      */
     public function show(Comment $comment)
     {
-        //
     }
 
     /**
@@ -56,7 +58,6 @@ class CommentController extends Controller
      */
     public function edit(Comment $comment)
     {
-        //
     }
 
     /**
@@ -64,7 +65,6 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        //
     }
 
     /**
@@ -72,6 +72,5 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        //
     }
 }
