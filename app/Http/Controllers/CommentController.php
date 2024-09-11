@@ -58,6 +58,11 @@ class CommentController extends Controller
      */
     public function edit(Comment $comment)
     {
+        $this->authorize('update', $comment);
+
+        return view('comments.edit', [
+            'comment' => $comment,
+        ]);
     }
 
     /**
@@ -65,6 +70,19 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
+        $this->authorize('update', $comment);
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ], [
+            'message.required' => 'O campo mensagem é obrigatório.',
+            'message.string'   => 'O campo mensagem deve ser um texto válido.',
+            'message.max'      => 'O campo mensagem deve ter somente 255 caracteres.',
+        ]);
+
+        $comment->update($validated);
+
+        return to_route('comments.index');
     }
 
     /**
